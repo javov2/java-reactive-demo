@@ -8,7 +8,6 @@ import java.util.UUID;
 @Data
 @Builder(toBuilder = true)
 public class Person {
-
     UUID id;
     String firstName;
     String lastName;

@@ -2,6 +2,7 @@ package org.pgd.poc.controller;
 
 import io.smallrye.mutiny.Multi;
 import org.pgd.poc.model.Person;
+import org.pgd.poc.repository.IPersonRepository;
 import org.pgd.poc.service.PersonService;
 
 import javax.inject.Inject;
@@ -14,12 +15,12 @@ import javax.ws.rs.core.MediaType;
 public class PersonController {
 
     @Inject
-    PersonService personService;
+    IPersonRepository personRepository;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Person> getAllPerson(){
-        return Multi.createFrom().item(() -> Person.builder().build());
+        return personRepository.findAll();
     }
 
 }

@@ -10,6 +10,7 @@ import org.pgd.poc.model.Location;
 import org.pgd.poc.model.Person;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.UUID;
 
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -20,7 +21,13 @@ public class PersonRepository implements IPersonRepository{
     @Override
     public Multi<Person> findAll() {
 
-        Uni<RowSet<Row>> rowSet = client.query("SELECT * FROM persons").execute();
+        Uni<RowSet<Row>> rowSet = client.query("SELECT person.*," +
+                "location.id as loc_id," +
+                "location.latitude as loc_lat," +
+                "location.longitude as loc_lon," +
+                "location.elevation as loc_ele " +
+                "FROM person " +
+                "JOIN location ON person.location_id = location.id ").execute();
 
         return rowSet
                 .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
@@ -29,13 +36,23 @@ public class PersonRepository implements IPersonRepository{
 
 
     private Person rowToPerson(Row row){
+        Location location = Location.builder()
+                .id(getUUIDFromRow(row, "loc_id"))
+                .latitude(row.getString("loc_lat"))
+                .longitude(row.getString("loc_lon"))
+                .elevation(row.getShort("loc_ele"))
+                .build();
         return Person.builder()
-                .id(row.getUUID("id"))
+                .id(getUUIDFromRow(row, "id"))
                 .firstName(row.getString("first_name"))
                 .lastName(row.getString("last_name"))
                 .email(row.getString("email"))
-                .location(row.get(Location.class, "location_id"))
+                .location(location)
                 .build();
     }
 
+    private UUID getUUIDFromRow(Row source, String field) {
+        String result = source.getString(field);
+        return UUID.fromString(result);
+    }
 }
