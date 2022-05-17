@@ -1,0 +1,56 @@
+services:
+  database:
+    image: email-service/database
+    container_name: postgres
+    build: docker/database
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  quarkus:
+    image: demo/quarkus
+      container_name: quarkus
+      build:
+        context: ms-distances-quarkus
+        dockerfile: ms-distances-quarkus/ Dockerfile
+      ports:
+        - "8080:8080"
+      links:
+        - database
+      depends_on:
+        - database
+      environment:
+  spring-reactive:
+    image: demo/spring-reactive
+    container_name: spring-reactive
+    build:
+      context: ms-distance-spring-reactive
+      dockerfile: ms-distance-spring-reactive
+    ports:
+      - "8081:8081"
+    links:
+      - database
+    depends_on:
+      - database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+  spring-sync:
+    image: demo/spring-sync
+    container_name: spring-sync
+    build:
+      context: .
+      dockerfile: ms-distance-spring-sync
+    ports:
+      - "8082:8082"
+    links:
+      - database
+    depends_on:
+      - database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
