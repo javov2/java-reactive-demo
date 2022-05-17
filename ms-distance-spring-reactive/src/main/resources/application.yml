@@ -1,2 +1,12 @@
 server:
   port: 8081
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://postgres@localhost:5432/postgres
+    username: postgres
+    password: postgres
+    initialization-mode: always
+
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG

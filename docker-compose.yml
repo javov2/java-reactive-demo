@@ -1,6 +1,6 @@
 services:
   database:
-    image: email-service/database
+    image: demo/database
     container_name: postgres
     build: docker/database
     ports:
@@ -11,17 +11,20 @@ services:
       POSTGRES_PASSWORD: postgres
   quarkus:
     image: demo/quarkus
-      container_name: quarkus
-      build:
-        context: ms-distances-quarkus
-        dockerfile: ms-distances-quarkus/ Dockerfile
-      ports:
-        - "8080:8080"
-      links:
-        - database
-      depends_on:
-        - database
-      environment:
+    container_name: quarkus
+    build:
+      context: ms-distances-quarkus
+      dockerfile: ms-distances-quarkus/ Dockerfile
+    ports:
+      - "8080:8080"
+    links:
+      - database
+    depends_on:
+      - database
+    environment:
+      - QUARKUS_DATASOURCE_USERNAME=postgres
+      - QUARKUS_DATASOURCE_PASSWORD=postgres
+      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://database:5432/postgres
   spring-reactive:
     image: demo/spring-reactive
     container_name: spring-reactive
