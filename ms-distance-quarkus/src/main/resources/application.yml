@@ -4,4 +4,6 @@ quarkus:
     username: postgres
     password: postgres
     reactive:
+      name: quarkus
       url: postgresql://localhost:5432/postgres
+      max-size: 10
