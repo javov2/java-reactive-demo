@@ -7,3 +7,4 @@ quarkus:
       name: quarkus
       url: postgresql://localhost:5432/postgres
       max-size: 10
+      initial-size: 10

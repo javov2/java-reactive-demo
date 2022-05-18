@@ -17,19 +17,17 @@ import java.util.UUID;
 public class PersonRepository implements IPersonRepository{
 
     private final PgPool client;
+    private static final String FIND_ALL_PERSON_QUERY = "SELECT person.*," +
+            "location.id as loc_id," +
+            "location.latitude as loc_lat," +
+            "location.longitude as loc_lon," +
+            "location.elevation as loc_ele " +
+            "FROM person " +
+            "JOIN location ON person.location_id = location.id ";
 
     @Override
     public Multi<Person> findAll() {
-
-        Uni<RowSet<Row>> rowSet = client.query("SELECT person.*," +
-                "location.id as loc_id," +
-                "location.latitude as loc_lat," +
-                "location.longitude as loc_lon," +
-                "location.elevation as loc_ele " +
-                "FROM person " +
-                "JOIN location ON person.location_id = location.id ").execute();
-
-        return rowSet
+        return client.query(FIND_ALL_PERSON_QUERY).execute()
                 .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
                 .onItem().transform(this::rowToPerson);
     }

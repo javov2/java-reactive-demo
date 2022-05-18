@@ -2,6 +2,7 @@ package com.pgd.poc.msdistancespringreactive.repository.config;
 
 
 import com.pgd.poc.msdistancespringreactive.repository.converters.PersonReadConverter;
+import com.pgd.poc.msdistancespringreactive.repository.converters.PersonWriteConverter;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 
@@ -25,6 +26,7 @@ public class PostgresConfig extends AbstractR2dbcConfiguration {
     public R2dbcCustomConversions r2dbcCustomConversions() {
         List<Converter<?, ?>> converters = new ArrayList<>();
         converters.add(new PersonReadConverter());
+        converters.add(new PersonWriteConverter());
         return R2dbcCustomConversions.of(PostgresDialect.INSTANCE, converters);
     }
 
